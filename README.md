@@ -1,5 +1,7 @@
 # GoNtroller
 
+This project is based on an ESP8266 (NodeMCU).
+
 NTC is a simple unit to read an NTC sensor, here in a voltage divider with a 47kOhm to ground
 Sensor in use is a Sourcing Map 100K Temperature Sensor Probe NTC.
 A,B and C have only been roughly calculated as my reference temperature probe was down on battery.
