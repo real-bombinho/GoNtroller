@@ -187,7 +187,7 @@ void loop() {
   ((tc > (1*60+30)) && (tc < (1*60 + 35))) ||      // >1.30 & < 1.35
   ((tc > (2*60+30)) && (tc < (2*60 + 35))) ||      // >2.30 & < 2.35
   ((tc > (3*60+30)) && (tc < (3*60 + 35)))) {      // >3.30 & < 3.35
-    MBR.switchRelay(mbRelay1, Relay_Open);  // switch on battery charger
+    MBR.switchRelay(mbRelay3, Relay_Open);  // switch on pump
   }
   else {
     MBR.switchRelay(mbRelay3, Relay_Close);
