@@ -17,14 +17,14 @@ bool TimeSlot::parse(const char *value) {
   nl = strstr( value, "\"value_exc_vat\":");
   if (nl) { 
     nl = &nl[16];
-    this->PriceExVAT = strtod(nl, &eptr);
-//    Serial.printf("price exc VAT is: %f\n", ts.PriceExVAT);
+    PriceExVAT = strtod(nl, &eptr);
+//    Serial.printf("price exc VAT is: %f\n", PriceExVAT);
   } 
   else {
-    this->From = 0;
-    this->Till = 0;
-    this->PriceExVAT = 0;
-    this->PriceIncVAT = 0;
+    From = 0;
+    Till = 0;
+    PriceExVAT = 0;
+    PriceIncVAT = 0;
     return false;
   }
   
@@ -53,28 +53,6 @@ bool TimeSlot::parse(const char *value) {
   Switches = 0;
   return result; 	
 }	
-
-OctopusAPI::OctopusAPI () {
-  averages = {0, 0, 0};	
-}
-
-void OctopusAPI::setClock() {
-
-  configTime(MY_TZ, timeServer1); // fetches time and daylight saving settings
-
-  Serial.print("Waiting for NTP time sync: ");
-  time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2) {
-    delay(500);
-    Serial.print(".");
-    now = time(nullptr);
-  }
-  Serial.println("");
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
-  Serial.print("Current time: ");
-  Serial.print(asctime(&timeinfo));
-}
 
 time_t TimeSlot::parseISO8601(const char *value)
 {
@@ -113,6 +91,30 @@ time_t TimeSlot::parseISO8601(const char *value)
   else
     return -1;
 }
+
+OctopusAPI::OctopusAPI () {
+  averages = {0, 0, 0};	
+}
+
+void OctopusAPI::setClock() {
+
+  configTime(MY_TZ, timeServer1); // fetches time and daylight saving settings
+
+  Serial.print("Waiting for NTP time sync: ");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println("");
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  Serial.print("Current time: ");
+  Serial.print(asctime(&timeinfo));
+}
+
+
 
 bool OctopusAPI::CalculateSwitching() {
   bool result = true;
