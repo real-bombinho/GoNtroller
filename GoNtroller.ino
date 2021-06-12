@@ -2,7 +2,6 @@
 #include "ModBusRelay.h"
 #include "NTC.h"
 #include "GoN_Relay.h"
-#include "Credentials.h"
 
 #ifndef STASSID
   #define STASSID "YourSSID"
