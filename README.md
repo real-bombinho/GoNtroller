@@ -11,3 +11,8 @@ when the relay state is to change and the last changing time is stored and can b
 
 LED uses "gostcai pre-wired round LEDs light, metal round 2 colors signal light, waterproof indicator
 light, common anode, 8mm, 3‑6V, for vehicle modification(Red Green)", having a common positive 
+
+Altered version of the ModBusRelay unit to be able to switch battery charger etc. via a
+ILS - Modbus RTU 4 Channel Relay Module and a Youmile TTL to RS485 Adapter Module 3.3V 5V.
+
+The Octopus unit is containing parts of the Agile routines. Not sure yet if I complete these routines or remove them.
