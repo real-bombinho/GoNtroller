@@ -18,13 +18,33 @@ float temperature () {
   float Vout, Rth;
   double temp; 
   uint64_t adc_value = 0;
-  int noOfMeasurements = 10;
+  int noOfMeasurements = 12;
+  int readings[noOfMeasurements];
   for (int i = 0; i < noOfMeasurements; i++) {
-    adc_value = adc_value + analogRead(SensorPort);
+    readings[i] = analogRead(SensorPort);
     delay(1);
   }
-  
-  Vout = VCC * adc_value / noOfMeasurements / adc_resolution;
+  for (int i = 1; i < noOfMeasurements; i++) {       // smallest
+    if (readings[0] > readings[i]) {
+      int t = readings[i];
+      readings[i] = readings[0];
+      readings[0] = t;
+    }
+    yield();
+  }
+  for (int i = 0; i < (noOfMeasurements - 1); i++) { // largest
+    if (readings[i] > readings[noOfMeasurements - 1]) {
+      int t = readings[i];
+      readings[i] = readings[noOfMeasurements - 1];
+      readings[noOfMeasurements - 1] = t;
+    } 
+    yield();
+  }
+  for (int i = 1; i < (noOfMeasurements - 1); i++) { // discard smallest & largest
+    adc_value = adc_value + readings[i];
+    yield();
+  }
+  Vout = VCC * adc_value / (noOfMeasurements - 2) / adc_resolution;
   Rth = (VCC * R2 / Vout) - R2;
 
   if (Rth > 250000) {
