@@ -16,3 +16,6 @@ Altered version of the ModBusRelay unit to be able to switch battery charger etc
 ILS - Modbus RTU 4 Channel Relay Module and a Youmile TTL to RS485 Adapter Module 3.3V 5V.
 
 The Octopus unit is containing parts of the Agile routines. Not sure yet if I complete these routines or remove them.
+
+74HC595 is a small library to control an attached 74HC595 in order to have additional (latching) ports.
+The 74HC595 should make it possible to send the ESP8266 into deep sleep without loosing the state of those ports.
