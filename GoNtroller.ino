@@ -58,6 +58,7 @@ void blink(uint8_t led, int onTime, int offTime, int repetitions) {
 
 void setup() {
   bool limp = false;
+  randomSeed(analogRead(A0));
   Serial.begin(19200);
   Serial.println("Hello!");  
 
@@ -80,7 +81,9 @@ void setup() {
   for (int i = mbRelay1; i< mbRelayNumber; i++) {
     MBR.switchRelay(i, Relay_Close);
   }
-   
+  
+  srand(time(nullptr));          // set up randomStartDelay
+  randomStartDelay = rand() % 6;  
 }
 
 void loop() {
