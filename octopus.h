@@ -1,3 +1,6 @@
+#ifndef OCTOPUS_H
+#define OCTOPUS_H
+
 #include <time.h>
 #include <ESP8266WiFi.h>
 #include "GoN_LED.h"
@@ -31,3 +34,5 @@ public:
   void setClock();  
   bool CalculateSwitching();
 };
+
+#endif
