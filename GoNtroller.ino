@@ -42,6 +42,7 @@ OctopusAPI octopus;
 time_t lastTimeFetched = 0;
 time_t lastBatteryCheck = 0;
 uint8_t g_Status = sOK;
+uint8_t randomStartDelay = 0;
 
 //SoftwareSerial S(RXPin, TXPin);
 MB_Relay MBR(RXPin, TXPin, 3);  
@@ -99,6 +100,12 @@ void loop() {
 
   int tc = (timeinfo.tm_hour * 60) + timeinfo.tm_min;
 
+// midnight  
+  
+  if ((tc < 5) && (now > (lastStatusSent + (30*60)))) {
+    randomStartDelay = rand() % 6;  // set random delay figure once per 24h
+  }
+  
 // check temperature and set state accordingly //////////////////////
 
   if (cylinderTemperature == -400) {
@@ -150,7 +157,7 @@ void loop() {
   
 // Cylinder bottom group of elements ////////////////////////////////
   
-  if ((tc >  (0*60+31)) && (tc < (4*60 + 30))) {  // >0.30 & < 4.30
+  if ((tc >  (0*60+31 + randomStartDelay)) && (tc < (4*60 + 30))) {  // >0.30 & < 4.30
     relay2.setState(LOW);  // switch on main load cylinder
   }
   else {
