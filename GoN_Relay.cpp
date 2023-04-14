@@ -18,7 +18,7 @@ bool Relay::setState(uint8_t state) {
       if (duration < 0) { duration = duration * -1; }
     }
     Serial.printf("Relay (pin %i) switched ", pin_);
-    delay(1);
+    delay(10);
     if (state == HIGH) {
       Serial.println("High");
     }
