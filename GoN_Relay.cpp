@@ -1,33 +1,40 @@
 #include "GoN_Relay.h"
 
-uint8_t Relay::state() {
-  return state_;
-}
-
 Relay::Relay (uint8_t pin) {
   pin_ = pin;
-  state_ = HIGH;               // initialise in off state
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, state_);   // turn relay off (high).
+  digitalWrite(pin, LOW);   // turn relay off (low).
   lastSwitch_ = 0;
 }
 
 bool Relay::setState(uint8_t state) {
-  if ((state != HIGH) && (state != LOW)) return false; 
-  if (state != state_) {
-    state_ = state;
-    digitalWrite(pin_, state_);
+  if (state != getState()) {
+    digitalWrite(pin_, state);
+    time_t priorSwitch = lastSwitch_;
     lastSwitch_ = time(nullptr);
-    Serial.printf("Relay (%i) switched ", pin_);
-    if (state_ == HIGH) {
-      Serial.printf("High\n");
+    static int16_t duration = 0;
+    if (priorSwitch != 0) {
+      duration = lastSwitch_ - priorSwitch;
+      if (duration < 0) { duration = duration * -1; }
+    }
+    Serial.printf("Relay (pin %i) switched ", pin_);
+    delay(1);
+    if (state == HIGH) {
+      Serial.println("High");
     }
     else {
-       Serial.printf("Low\n");
+      Serial.printf("Low\n");
     }
+    return true;
   }
-  return true;
+  else return false;
 }
+
+uint8_t Relay::getState() {
+  return digitalRead(pin_);
+  delay(1);  
+}
+
 
 time_t Relay::lastSwitch () {
   return lastSwitch_;
