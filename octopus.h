@@ -36,7 +36,7 @@ public:
   static const char *   host;
   static const char *   path;
   struct Averages averages;
-  struct TimeSlot priceData[24 * 2 * 2]; // 2 days of half hourly slots
+  struct TimeSlot priceData[Agile_Slots]; // 2 days of half hourly slots
   OctopusAPI();	
   void setPortalEnabled(const bool enable);
   void WiFiOn ();
