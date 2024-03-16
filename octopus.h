@@ -8,7 +8,7 @@
 #include <sntp.h>
 #include "GoN_LED.h"
 
-//#define Agile_Slots 96 
+#define Agile_Slots 96 
 
 const char MyTZ[] PROGMEM = "GMT0BST,M3.5.0/1,M10.5.0\0"; // https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
 const char timeServer1[] PROGMEM = "uk.pool.ntp.org";
