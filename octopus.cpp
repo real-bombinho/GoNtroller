@@ -3,12 +3,11 @@
 extern const char *ssid; 
 extern const char *pass;
 
-const char *timeServer1 = "uk.pool.ntp.org";
-const char *timeServer2 = "time.nist.gov";
-
 const uint16_t OctopusAPI::port = 443;
 const char *   OctopusAPI::host = "api.octopus.energy";
-const char *   OctopusAPI::path = "/v1/products/AGILE-18-02-21/electricity-tariffs/E-1R-AGILE-18-02-21-N/standard-unit-rates/";
+const char *   OctopusAPI::path = "/v1/products/AGILE-23-12-06/electricity-tariffs/E-1R-AGILE-23-12-06-N/standard-unit-rates/";
+
+WiFiManager wm;
 
 bool TimeSlot::parse(const char *value) {
   bool result = true;  //"value_exc_vat":9.14,"value_inc_vat":9.597,"valid_from":"2021-02-28T22:30:00Z","valid_to":"2021-02-28T23:00:00Z" 
@@ -94,6 +93,10 @@ time_t TimeSlot::parseISO8601(const char *value)
 
 OctopusAPI::OctopusAPI () {
   averages = {0, 0, 0};	
+  wm.setHostname(WiFiSetup);
+  wm.setConfigPortalTimeout(120);
+  wm.setConnectTimeout(30);
+  WiFiSleeping = true;
 }
 
 void OctopusAPI::setClock() {
@@ -113,8 +116,6 @@ void OctopusAPI::setClock() {
   Serial.print("Current time: ");
   Serial.print(asctime(&timeinfo));
 }
-
-
 
 bool OctopusAPI::CalculateSwitching() {
   bool result = true;
@@ -142,38 +143,45 @@ bool OctopusAPI::CalculateSwitching() {
 }
 
 void OctopusAPI::WiFiOff () {
+  if (WiFiSleeping) return;
+  sntp_stop();
+  wm.disconnect();
   WiFi.mode( WIFI_OFF );
   WiFi.forceSleepBegin();
   delay( 10 );
   Serial.println("WiFi off");
+  WiFiSleeping = true;
 }
 
 void OctopusAPI::WiFiOn() {
-  delay( 10 );
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-
+  if (!WiFiSleeping) return;
   // Bring up the WiFi connection
   WiFi.persistent(false); 
   WiFi.mode( WIFI_STA );
-  WiFi.begin(ssid, pass); 
-#ifdef GoN_LED_H
-  digitalWrite(LED_GREEN, LOW);
-#endif  
-  while (WiFi.status() != WL_CONNECTED) {
-#ifdef GoN_LED_H
-    blink(LED_RED, 333, 333, 5);
-#else
-    delay(500)    
-#endif     
-    Serial.print(".");
+  wm.setConnectTimeout(5);
+  int retry = 5;
+  while ((WiFiSleeping) && (retry > 0)) {
+    WiFiSleeping = !wm.autoConnect(WiFiSetup, NULL);
+    retry--;
   }
-#ifdef GoN_LED_H
-  digitalWrite(LED_GREEN, HIGH);
-#endif   
-  Serial.println("");
+   
+  if (!WiFiSleeping) {
+    Serial.println("\nWiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    sntp_stop();
+    sntp_init();
+  }
+  else {
+    Serial.println("\nWiFi connection failed.");
+    WiFiOff();
+  }
+}
 
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+void OctopusAPI::WiFiReset() {
+  wm.resetSettings();
+}
+
+void OctopusAPI::setPortalEnabled(const bool enable) {
+  wm.setEnableConfigPortal(enable);
 }
